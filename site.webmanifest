@@ -1,0 +1,13 @@
+{
+  "name": "Bulk QR Code & Barcode Generator",
+  "short_name": "QR & Barcode",
+  "description": "Generate bulk QR codes and barcodes online for free. No account needed.",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#1a1a2e",
+  "background_color": "#f4f6f9",
+  "icons": [
+    { "src": "android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "android-chrome-512x512.png",  "sizes": "512x512",  "type": "image/png" }
+  ]
+}

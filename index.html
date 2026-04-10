@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bulk QR Code &amp; Barcode Generator — Free Online Tool</title>
+
+  <!-- SEO -->
+  <meta name="description" content="Generate bulk QR codes and barcodes online for free. Paste a list, get QR codes + Code 128 / EAN-13 / UPC barcodes instantly. Export to CSV or Google Sheets. No account needed." />
+  <meta name="keywords" content="bulk qr code generator, qr code generator, barcode generator, batch qr code, free qr code generator, EAN-13 barcode, code 128, UPC barcode, ITF-14, Code 39, online barcode generator" />
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+  <meta name="theme-color" content="#1a1a2e" />
+
+  <link rel="canonical" href="https://qrcode.a2n.dev/" />
+  <link rel="alternate" hreflang="en" href="https://qrcode.a2n.dev/" />
+  <link rel="alternate" hreflang="x-default" href="https://qrcode.a2n.dev/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://qrcode.a2n.dev/" />
+  <meta property="og:title" content="Bulk QR Code &amp; Barcode Generator — Free Online Tool" />
+  <meta property="og:description" content="Generate bulk QR codes and barcodes from a list in seconds. Export to CSV or Google Sheets. Free, no account needed." />
+  <meta property="og:site_name" content="QR Code &amp; Barcode Generator" />
+  <meta property="og:image" content="https://qrcode.a2n.dev/android-chrome-512x512.png" />
+  <meta name="twitter:image" content="https://qrcode.a2n.dev/android-chrome-512x512.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Bulk QR Code &amp; Barcode Generator" />
+  <meta name="twitter:description" content="Paste a list, get QR codes + barcodes instantly. Free online tool — no account needed." />
+
+  <!-- JSON-LD structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Bulk QR Code & Barcode Generator",
+    "url": "https://qrcode.a2n.dev/",
+    "description": "Free online tool to generate bulk QR codes and barcodes (Code 128, EAN-13, EAN-8, UPC-A, ITF-14, Code 39). Paste a list of values, preview, and export to CSV or Google Sheets.",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Bulk QR code generation",
+      "Barcode generation (Code 128, EAN-13, EAN-8, UPC-A, ITF-14, Code 39)",
+      "CSV export",
+      "Google Sheets export",
+      "Print layout",
+      "No account required"
+    ]
+  }
+  </script>
+
+  <!-- Libraries (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f4f6f9;
+      color: #1a1a2e;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a1a2e;
+      color: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    header h1 { font-size: 1.3rem; font-weight: 600; }
+
+    .container { max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card h2 { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #444; text-transform: uppercase; letter-spacing: .05em; }
+
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      border: 1.5px solid #ddd;
+      border-radius: 6px;
+      padding: .75rem;
+      font-size: .95rem;
+      resize: vertical;
+      font-family: monospace;
+      transition: border-color .2s;
+    }
+    textarea:focus { outline: none; border-color: #4f8ef7; }
+
+    .hint { font-size: .8rem; color: #888; margin-top: .4rem; }
+
+    .options { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; align-items: center; }
+
+    .options label { font-size: .85rem; color: #555; display: flex; align-items: center; gap: .4rem; }
+    .options input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; }
+
+    select {
+      border: 1.5px solid #ddd;
+      border-radius: 6px;
+      padding: .4rem .6rem;
+      font-size: .85rem;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .btn-row { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1rem; }
+
+    button {
+      padding: .6rem 1.2rem;
+      border: none;
+      border-radius: 6px;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity .15s, transform .1s;
+    }
+    button:active { transform: scale(.97); }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+
+    .btn-primary   { background: #4f8ef7; color: #fff; }
+    .btn-danger    { background: #e74c3c; color: #fff; }
+    .btn-success   { background: #27ae60; color: #fff; }
+    .btn-secondary { background: #e0e0e0; color: #333; }
+
+    /* Preview grid */
+    #preview-section { display: none; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .code-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      background: #fff;
+      page-break-inside: avoid;
+      position: relative;
+    }
+
+    .code-card .card-number {
+      position: absolute;
+      top: .5rem;
+      left: .5rem;
+      background: #1a1a2e;
+      color: #fff;
+      font-size: .7rem;
+      font-weight: 700;
+      width: 1.4rem;
+      height: 1.4rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .code-card .label {
+      font-size: .75rem;
+      color: #888;
+      margin-bottom: .5rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .code-card .value {
+      font-size: .9rem;
+      font-weight: 600;
+      word-break: break-all;
+      margin-bottom: .75rem;
+    }
+
+    .code-card canvas, .code-card svg, .code-card img {
+      max-width: 100%;
+      display: block;
+      margin: 0 auto .5rem;
+    }
+
+    .code-card .type-badge {
+      display: inline-block;
+      font-size: .7rem;
+      background: #eef3ff;
+      color: #4f8ef7;
+      border-radius: 4px;
+      padding: .15rem .5rem;
+      margin-bottom: .5rem;
+    }
+
+    .code-card .note {
+      font-size: .8rem;
+      color: #333;
+      background: #f0f4ff;
+      border-left: 3px solid #4f8ef7;
+      padding: .3rem .5rem;
+      border-radius: 0 4px 4px 0;
+      margin-top: .6rem;
+      text-align: left;
+      word-break: break-word;
+    }
+
+    /* CSV export notice */
+    #csv-notice { font-size:.85rem; color:#27ae60; display:none; margin-top:.5rem; }
+
+    /* Tooltip */
+    .tooltip-host { position: relative; }
+    .tooltip-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.1rem;
+      height: 1.1rem;
+      border-radius: 50%;
+      background: #c0c8d8;
+      color: #fff;
+      font-size: .7rem;
+      font-weight: 700;
+      cursor: default;
+      flex-shrink: 0;
+    }
+    .tooltip-text {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 0;
+      background: #1a1a2e;
+      color: #fff;
+      font-size: .78rem;
+      line-height: 1.5;
+      padding: .5rem .75rem;
+      border-radius: 6px;
+      white-space: normal;
+      width: 280px;
+      z-index: 10;
+      pointer-events: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+    }
+    .tooltip-text::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 1rem;
+      border: 5px solid transparent;
+      border-top-color: #1a1a2e;
+    }
+    .tooltip-host:hover .tooltip-text { display: block; }
+
+    /* Help modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      z-index: 1000;
+      overflow-y: auto;
+      padding: 2rem 1rem;
+    }
+    .modal-overlay.open { display: block; }
+    .modal-box {
+      background: #fff;
+      border-radius: 10px;
+      max-width: 620px;
+      margin: 0 auto;
+      padding: 2rem;
+      position: relative;
+    }
+    .modal-box h3 { font-size: 1.1rem; font-weight: 700; margin: 1.2rem 0 .4rem; color: #1a1a2e; }
+    .modal-box h3:first-of-type { margin-top: 0; }
+    .modal-box p, .modal-box li { font-size: .9rem; color: #444; line-height: 1.6; }
+    .modal-box ul { padding-left: 1.2rem; margin: .3rem 0; }
+    .modal-box code {
+      background: #f0f0f0;
+      padding: .1rem .35rem;
+      border-radius: 3px;
+      font-size: .85rem;
+      font-family: monospace;
+      word-break: break-all;
+    }
+    .modal-box pre {
+      background: #f7f7f7;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: .75rem 1rem;
+      font-size: .82rem;
+      font-family: monospace;
+      overflow-x: auto;
+      margin: .5rem 0;
+      line-height: 1.5;
+    }
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      line-height: 1;
+      cursor: pointer;
+      color: #888;
+      padding: 0 .3rem;
+      font-weight: 400;
+    }
+    .modal-close:hover { color: #333; }
+
+    /* Print */
+    @media print {
+      header, .container > .card:first-child, .container > .card:nth-child(2), .btn-row, #export-card, #seo-info, footer { display: none !important; }
+      #preview-section { display: block !important; }
+      body { background: #fff; min-height: unset; }
+      .container { margin: 0; padding: 0; }
+      .grid { grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+    <rect x="3" y="14" width="7" height="7"/><circle cx="17.5" cy="17.5" r="2.5"/>
+    <path d="M14 14h3"/><path d="M20 14v3"/><path d="M20 20v.5"/>
+  </svg>
+  <h1>Bulk QR Code &amp; Barcode Generator</h1>
+</header>
+
+<div class="container">
+
+  <!-- SEO intro -->
+  <div class="card" style="padding:1.2rem 1.5rem;">
+    <p style="font-size:.92rem;color:#555;line-height:1.7;margin:0;">
+      Free <strong>bulk QR code generator</strong> and <strong>barcode generator</strong> — paste a list of values and get
+      QR codes + barcodes (<strong>Code 128</strong>, <strong>EAN-13</strong>, <strong>EAN-8</strong>, <strong>UPC-A</strong>, <strong>ITF-14</strong>, <strong>Code 39</strong>) in one click.
+      No account, no watermark, no limit. Export to CSV or Google Sheets, or print directly.
+    </p>
+  </div>
+
+  <!-- Input -->
+  <div class="card">
+    <h2>Input</h2>
+    <textarea id="input" placeholder="Enter one value per line, e.g.:&#10;@header&gt; serial | role | location | notes&#10;SN-00142 | admin | room 3B | spare keyboard attached&#10;SN-00143 | user  | room 1A | docking station missing"></textarea>
+    <p class="hint">One value per line — optionally start with <code style="background:#f0f0f0;padding:.1rem .3rem;border-radius:3px;">@header&gt; name | name | …</code> to name columns. Use <code style="background:#f0f0f0;padding:.1rem .3rem;border-radius:3px;">| @name value</code> to name a single column inline. <button onclick="openHelp()" style="background:none;border:none;color:#4f8ef7;cursor:pointer;padding:0;font-size:inherit;text-decoration:underline;">See all syntax</button></p>
+
+    <div class="options">
+      <label><input type="checkbox" id="opt-qr" checked /> QR Code</label>
+      <label><input type="checkbox" id="opt-bar" checked /> Barcode</label>
+      <label><input type="checkbox" id="opt-main-text" checked /> Show main text</label>
+      <label><input type="checkbox" id="opt-bar-text" checked /> Show barcode text</label>
+      <label><input type="checkbox" id="opt-id" checked /> Show ID</label>
+      <label><input type="checkbox" id="opt-label" checked /> Show label</label>
+      <label><input type="checkbox" id="opt-note" checked /> Show columns</label>
+    </div>
+    <div class="options" style="margin-top:.5rem;">
+      <span style="display:flex;align-items:center;gap:.4rem;font-size:.85rem;color:#555;">
+        Barcode format:
+        <select id="bar-format">
+          <option value="CODE128">Code 128 (any text)</option>
+          <option value="CODE39">Code 39 (A-Z 0-9 - . $ / + %)</option>
+          <option value="EAN13">EAN-13 (exactly 13 digits)</option>
+          <option value="EAN8">EAN-8 (exactly 8 digits)</option>
+          <option value="UPC">UPC-A (exactly 12 digits)</option>
+          <option value="ITF14">ITF-14 (exactly 14 digits)</option>
+        </select>
+      </span>
+      <span style="display:flex;align-items:center;gap:.4rem;font-size:.85rem;color:#555;">
+        QR size:
+        <select id="qr-size">
+          <option value="128">128px</option>
+          <option value="200" selected>200px</option>
+          <option value="256">256px</option>
+          <option value="300">300px</option>
+        </select>
+      </span>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary" onclick="generate()">Generate</button>
+      <button class="btn-secondary" onclick="document.getElementById('input').value=''">Clear</button>
+      <button class="btn-secondary" onclick="openHelp()">Help</button>
+    </div>
+  </div>
+
+  <!-- Export -->
+  <div class="card" id="export-card" style="display:none;">
+    <h2>Export</h2>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="exportCSV()">Download CSV</button>
+      <button class="btn-secondary" id="btn-copy-csv" onclick="copyCSV()">Copy CSV</button>
+      <button class="btn-primary"   id="btn-copy-sheets" onclick="copyForSheets()">Copy for Google Sheets</button>
+      <button class="btn-secondary" onclick="printCodes()">Print</button>
+    </div>
+    <div style="margin-top:.75rem;">
+      <label class="tooltip-host" style="display:inline-flex;align-items:center;gap:.4rem;font-size:.85rem;color:#555;cursor:pointer;">
+        <input type="checkbox" id="opt-blank-row" style="width:16px;height:16px;cursor:pointer;" />
+        Blank row between entries
+        <span class="tooltip-icon">?</span>
+        <span class="tooltip-text">Inserts an empty row between each entry in CSV and Google Sheets.<br>Useful when scanning barcodes row-by-row — the blank row gives you time to move to the next cell without accidentally reading ahead.</span>
+      </label>
+    </div>
+    <p id="copy-notice" style="display:none;font-size:.85rem;margin-top:.5rem;"></p>
+  </div>
+
+  <!-- Preview -->
+  <div id="preview-section">
+    <div class="card">
+      <h2>Preview <span id="count-badge" style="font-weight:400;color:#888;font-size:.85rem;"></span></h2>
+      <div class="grid" id="grid"></div>
+    </div>
+  </div>
+
+  <!-- SEO FAQ / Info -->
+  <div class="card" id="seo-info" style="margin-top:2rem;">
+    <h2 style="font-size:.95rem;">About this tool</h2>
+    <div style="display:grid;gap:1rem;font-size:.88rem;color:#555;line-height:1.7;margin-top:.75rem;">
+      <div>
+        <strong>Bulk QR code generation</strong><br>
+        Paste one value per line to generate dozens of QR codes at once. Each code is rendered at up to 300 px and can be downloaded via CSV export (base64 PNG) or printed directly.
+      </div>
+      <div>
+        <strong>Barcode formats supported</strong><br>
+        <em>Code 128</em> (all ASCII text) · <em>Code 39</em> (alphanumeric) · <em>EAN-13</em> (13 digits, retail) · <em>EAN-8</em> (8 digits, small packaging) · <em>UPC-A</em> (12 digits, North American retail) · <em>ITF-14</em> (14 digits, shipping cartons).
+      </div>
+      <div>
+        <strong>Export &amp; integration</strong><br>
+        Download a <em>CSV</em> with value, extra columns, and base64-encoded images — ready for Excel, LibreOffice, or any data pipeline.
+        <em>Google Sheets</em> export uses <code>=IMAGE()</code> formulas so QR codes and barcodes render live inside your spreadsheet.
+      </div>
+      <div>
+        <strong>Who is this for?</strong><br>
+        Inventory managers, warehouse teams, retailers, developers, and anyone who needs to label a batch of products, assets, or serial numbers quickly — without installing software or signing up for a service.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer style="text-align:center;padding:1.5rem 1rem 2rem;font-size:.82rem;color:#888;">
+  Open source &mdash;
+  <a href="https://github.com/bouteillerAlan/qrcode" target="_blank" rel="noopener"
+     style="color:#4f8ef7;text-decoration:none;display:inline-flex;align-items:center;gap:.3rem;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482
+               0-.237-.009-.868-.013-1.703-2.782.604-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.463-1.11-1.463
+               -.908-.62.069-.608.069-.608 1.003.07 1.531 1.031 1.531 1.031.892 1.529 2.341 1.087 2.91.832
+               .092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943
+               0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647
+               0 0 .84-.269 2.75 1.025A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337
+               c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647
+               .64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935
+               .359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743
+               0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12
+               22 6.477 17.523 2 12 2z"/>
+    </svg>
+    github.com/bouteillerAlan/qrcode
+  </a>
+</footer>
+
+<!-- Help modal -->
+<div id="help-modal" class="modal-overlay" onclick="if(event.target===this)closeHelp()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeHelp()">&#x2715;</button>
+    <h3>Basic usage</h3>
+    <p>Enter one value per line. Each line generates a QR code and/or barcode for that value.</p>
+    <pre>PRODUCT-001
+PRODUCT-002
+Hello World</pre>
+
+    <h3>Adding extra columns</h3>
+    <p>Separate additional data with <code>|</code>. You can add as many columns as you like.</p>
+    <pre>SN-00142 | admin | room 3B | spare keyboard attached</pre>
+    <p>Columns appear on the card and are exported in CSV / Google Sheets.</p>
+
+    <h3>Naming a column inline</h3>
+    <p>Prefix a column value with <code>@name&nbsp;</code> to give it a label:</p>
+    <pre>SN-00142 | @role admin | @location "room 3B" | @notes spare keyboard attached</pre>
+    <p>The label is shown on the card and used as the column header in exports.</p>
+
+    <h3>Header line</h3>
+    <p>Put <code>@header&gt;</code> on the <strong>first line</strong> to name all columns at once, so individual rows don't need <code>@name</code> prefixes:</p>
+    <pre>@header&gt; serial | role | location | notes
+SN-00142 | admin | room 3B | spare keyboard attached
+SN-00143 | user  | room 1A | docking station missing</pre>
+    <ul>
+      <li>Position 0 renames the <em>Value</em> column header in CSV/Sheets.</li>
+      <li>Positions 1, 2, … name the extra columns.</li>
+      <li>An inline <code>@name</code> on a row overrides the header for that cell.</li>
+    </ul>
+
+    <h3>Mixing styles</h3>
+    <p>Header names and inline <code>@name</code> prefixes can be combined freely. Inline always wins.</p>
+
+    <h3>Options</h3>
+    <ul>
+      <li><strong>QR Code / Barcode</strong> — choose which code types to generate.</li>
+      <li><strong>Show main text</strong> — display the raw value on the card.</li>
+      <li><strong>Show barcode text</strong> — print the value below the barcode.</li>
+      <li><strong>Show ID</strong> — numbered badge in the card corner.</li>
+      <li><strong>Show label</strong> — QR / format badges on the card.</li>
+      <li><strong>Show columns</strong> — show/hide all extra column data on cards and in exports.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+function svgToDataURL(svgEl) {
+  const xml = new XMLSerializer().serializeToString(svgEl);
+  return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(xml)));
+}
+
+function canvasToDataURL(canvas) {
+  return canvas.toDataURL('image/png');
+}
+
+// Wait for QRCode library to render its canvas then grab dataURL
+function qrDataURL(container) {
+  const canvas = container.querySelector('canvas');
+  if (canvas) return canvasToDataURL(canvas);
+  const img = container.querySelector('img');
+  if (img) return img.src;
+  return null;
+}
+
+// ── state ────────────────────────────────────────────────────────────────────
+let items = [];       // [{value, cols, qrURL, barURL, barShowText}]
+let headerNames = []; // names from @header> line: [0]=value col, [1+]=extra cols
+
+function openHelp()  { document.getElementById('help-modal').classList.add('open'); }
+function closeHelp() { document.getElementById('help-modal').classList.remove('open'); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeHelp(); });
+
+// Re-run generate() when any option changes (only if already generated)
+function regenerateIfReady() {
+  if (items.length > 0) generate();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  ['opt-qr', 'opt-bar', 'opt-main-text', 'opt-bar-text', 'opt-id', 'opt-label', 'opt-note', 'bar-format', 'qr-size'].forEach(id => {
+    document.getElementById(id).addEventListener('change', regenerateIfReady);
+  });
+
+  // Pre-load example on first open
+  const ta = document.getElementById('input');
+  ta.value = [
+    '@header> Serial | Role | Location | Notes',
+    'SN-00142 | Admin | Room 3B | Spare keyboard attached',
+    'SN-00143 | User  | Room 1A | Docking station missing',
+    'SN-00144 | User  | Room 2C |'
+  ].join('\n');
+  generate();
+});
+
+// ── generate ─────────────────────────────────────────────────────────────────
+function generate() {
+  const raw = document.getElementById('input').value.trim();
+  if (!raw) { alert('Please enter at least one value.'); return; }
+
+  const allLines = raw.split('\n').map(s => s.trim()).filter(Boolean);
+
+  // Parse optional header line
+  headerNames = [];
+  const lines = allLines[0] && allLines[0].startsWith('@header>')
+    ? (headerNames = allLines[0].slice(8).split('|').map(s => s.trim()), allLines.slice(1))
+    : allLines;
+
+  const values = lines.map(l => {
+    const parts = l.split('|').map(s => s.trim());
+    const cols = parts.slice(1).map((p, i) => {
+      const m = p.match(/^@(\S+)\s+([\s\S]*)$/);
+      // inline @name overrides header; fall back to headerNames[i+1]
+      return m ? { name: m[1], value: m[2] } : { name: headerNames[i + 1] || null, value: p };
+    });
+    return { value: parts[0], cols };
+  });
+  const doQR      = document.getElementById('opt-qr').checked;
+  const doBar     = document.getElementById('opt-bar').checked;
+  const showMainText = document.getElementById('opt-main-text').checked;
+  const showId    = document.getElementById('opt-id').checked;
+  const showLabel = document.getElementById('opt-label').checked;
+  const showNote  = document.getElementById('opt-note').checked;
+
+  if (!doQR && !doBar) { alert('Select at least one code type.'); return; }
+
+  const barFormat  = document.getElementById('bar-format').value;
+  const qrSize     = parseInt(document.getElementById('qr-size').value, 10);
+  const barShowText = document.getElementById('opt-bar-text').checked;
+
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  items = [];
+
+  values.forEach(({ value, cols }, index) => {
+    const card = document.createElement('div');
+    card.className = 'code-card';
+
+    const numEl = document.createElement('div');
+    numEl.className = 'card-number';
+    numEl.textContent = index + 1;
+    if (!showId) numEl.style.display = 'none';
+    card.appendChild(numEl);
+
+    const valEl = document.createElement('div');
+    valEl.className = 'value';
+    valEl.textContent = value;
+    if (!showMainText) valEl.style.display = 'none';
+    card.appendChild(valEl);
+
+    let qrURL = null, barURL = null;
+
+    // QR Code
+    if (doQR) {
+      const badge = document.createElement('span');
+      badge.className = 'type-badge';
+      badge.textContent = 'QR';
+      if (!showLabel) badge.style.display = 'none';
+      card.appendChild(badge);
+
+      const qrDiv = document.createElement('div');
+      card.appendChild(qrDiv);
+
+      try {
+        new QRCode(qrDiv, {
+          text: value,
+          width: qrSize,
+          height: qrSize,
+          correctLevel: QRCode.CorrectLevel.M
+        });
+        // qrcodejs leaves both a canvas and a hidden img in the div;
+        // grab the canvas data URL then replace everything with one clean img.
+        const qrCanvas = qrDiv.querySelector('canvas');
+        if (qrCanvas) {
+          qrURL = qrCanvas.toDataURL('image/png');
+          qrDiv.innerHTML = '';
+          const img = document.createElement('img');
+          img.src = qrURL;
+          qrDiv.appendChild(img);
+        } else {
+          qrURL = qrDataURL(qrDiv);
+        }
+      } catch(e) {
+        qrDiv.textContent = 'QR error: ' + e.message;
+      }
+    }
+
+    // Barcode
+    if (doBar) {
+      const badge = document.createElement('span');
+      badge.className = 'type-badge';
+      badge.style.background = '#fff8ee';
+      badge.style.color = '#e67e22';
+      badge.textContent = barFormat;
+      if (!showLabel) badge.style.display = 'none';
+      card.appendChild(badge);
+
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      card.appendChild(svg);
+
+      try {
+        JsBarcode(svg, value, {
+          format: barFormat,
+          lineColor: '#000',
+          width: 2,
+          height: 60,
+          displayValue: barShowText,
+          fontSize: 12,
+          margin: 8
+        });
+        barURL = svgToDataURL(svg);
+      } catch(e) {
+        svg.remove();
+        const err = document.createElement('p');
+        err.style.color = '#e74c3c';
+        err.style.fontSize = '.8rem';
+        const msg = (e && (e.message || (typeof e === 'string' ? e : JSON.stringify(e)))) || 'invalid value for this format';
+        err.textContent = 'Barcode error: ' + msg;
+        card.appendChild(err);
+      }
+    }
+
+    // Extra columns
+    if (showNote) {
+      const esc = s => s.replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+      const multiCol = cols.length > 1;
+      cols.forEach((col, i) => {
+        if (!col.value) return;
+        const colEl = document.createElement('div');
+        colEl.className = 'note';
+        const label = col.name || (multiCol ? `Col ${i + 1}` : 'Note');
+        colEl.innerHTML = `<strong>${esc(label)}:</strong> ` + esc(col.value);
+        card.appendChild(colEl);
+      });
+    }
+
+    grid.appendChild(card);
+    items.push({ value, cols, qrURL, barURL, barShowText });
+  });
+
+  document.getElementById('preview-section').style.display = 'block';
+  document.getElementById('export-card').style.display = 'block';
+  document.getElementById('count-badge').textContent = `(${items.length} item${items.length !== 1 ? 's' : ''})`;
+  document.getElementById('copy-notice').style.display = 'none';
+}
+
+// ── PDF export ────────────────────────────────────────────────────────────────
+// ── CSV export ────────────────────────────────────────────────────────────────
+function buildCSVRows() {
+  const showText = document.getElementById('opt-main-text').checked;
+  const showNote = document.getElementById('opt-note').checked;
+  const maxCols  = showNote ? Math.max(0, ...items.map(item => item.cols.length)) : 0;
+  const colHeaders = Array.from({length: maxCols}, (_, i) => {
+    for (const item of items) { if (item.cols[i]?.name) return `"${item.cols[i].name.replace(/"/g, '""')}"`; }
+    return `"Col ${i + 1}"`;
+  });
+  const valueHeader = headerNames[0] ? `"${headerNames[0].replace(/"/g, '""')}"` : '"Value"';
+  const header = [
+    ...(showText ? [valueHeader] : []),
+    ...colHeaders,
+    '"QR Code (base64 PNG)"',
+    '"Barcode (base64 SVG)"'
+  ];
+  const blankRow = document.getElementById('opt-blank-row').checked;
+  const emptyRow = Array(header.length).fill('""');
+  const rows = [header];
+  items.forEach(({ value, cols, qrURL, barURL }, idx) => {
+    if (blankRow && idx > 0) rows.push(emptyRow);
+    const colCells = Array.from({length: maxCols}, (_, i) => '"' + ((cols[i]?.value) || '').replace(/"/g, '""') + '"');
+    const row = [
+      ...(showText ? ['"' + value.replace(/"/g, '""') + '"'] : []),
+      ...colCells,
+      '"' + (qrURL || '') + '"',
+      '"' + (barURL || '') + '"'
+    ];
+    rows.push(row);
+  });
+  return rows;
+}
+
+function exportCSV() {
+  if (!items.length) return;
+
+  const rows = buildCSVRows();
+
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'codes.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── print ─────────────────────────────────────────────────────────────────────
+// Browsers don't render <canvas> in print. Swap them for <img> first, restore after.
+function printCodes() {
+  window.print();
+}
+
+// ── copy helpers ──────────────────────────────────────────────────────────────
+function showNotice(msg, color) {
+  const el = document.getElementById('copy-notice');
+  el.textContent = msg;
+  el.style.color = color || '#27ae60';
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 3000);
+}
+
+function copyToClipboard(text, btnId, successMsg) {
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById(btnId);
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+    showNotice(successMsg);
+  }).catch(() => showNotice('Copy failed — try a different browser.', '#e74c3c'));
+}
+
+// ── copy CSV ──────────────────────────────────────────────────────────────────
+function copyCSV() {
+  if (!items.length) return;
+  const rows = buildCSVRows();
+  copyToClipboard(rows.map(r => r.join(',')).join('\n'), 'btn-copy-csv',
+    'CSV copied to clipboard! Paste into a text file or Excel.');
+}
+
+// ── copy for Google Sheets ────────────────────────────────────────────────────
+// Generates a TSV where QR and Barcode columns use =IMAGE() with public APIs.
+// Paste directly into Google Sheets (Ctrl+Shift+V or regular paste).
+const BWIP_FORMAT = {
+  CODE128: 'code128', CODE39: 'code39', EAN13: 'ean13',
+  EAN8: 'ean8',       UPC:    'upca',   ITF14: 'itf14'
+};
+
+function copyForSheets() {
+  if (!items.length) return;
+  const barFormat = document.getElementById('bar-format').value;
+  const bwipCode  = BWIP_FORMAT[barFormat] || 'code128';
+
+  const showMainText = document.getElementById('opt-main-text').checked;
+  const showNote     = document.getElementById('opt-note').checked;
+  const maxCols      = showNote ? Math.max(0, ...items.map(item => item.cols.length)) : 0;
+  const colHeaders   = Array.from({length: maxCols}, (_, i) => {
+    for (const item of items) { if (item.cols[i]?.name) return item.cols[i].name; }
+    return `Col ${i + 1}`;
+  });
+  const valueHeader  = headerNames[0] || 'Value';
+  const headerCols   = [...(showMainText ? [valueHeader] : []), ...colHeaders, 'QR Code', 'Barcode'];
+  const header       = headerCols.join('\t');
+  const barShowText  = items.length ? items[0].barShowText : true;
+  const dataRows = items.map(({ value, cols }) => {
+    const enc = encodeURIComponent(value);
+    const qrFormula  = `=IMAGE("https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${enc}")`;
+    const textParam  = barShowText ? '&includetext' : '';
+    const barFormula = `=IMAGE("https://bwipjs-api.metafloor.com/?bcid=${bwipCode}&text=${enc}&scale=3${textParam}")`;
+    const colCells   = Array.from({length: maxCols}, (_, i) => cols[i]?.value || '');
+    const rowCols    = [...(showMainText ? [value] : []), ...colCells, qrFormula, barFormula];
+    return rowCols.join('\t');
+  });
+
+  const blankRow  = document.getElementById('opt-blank-row').checked;
+  const emptyLine = Array(headerCols.length).fill('').join('\t');
+  const tsvRows   = blankRow
+    ? dataRows.flatMap((r, i) => i > 0 ? [emptyLine, r] : [r])
+    : dataRows;
+  const tsv = [header, ...tsvRows].join('\n');
+  copyToClipboard(tsv, 'btn-copy-sheets',
+    'Copied! Paste into Google Sheets — QR and Barcode columns will load as images automatically.');
+}
+</script>
+</body>
+</html>
